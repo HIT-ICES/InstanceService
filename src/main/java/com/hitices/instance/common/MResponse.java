@@ -1,6 +1,5 @@
 package com.hitices.instance.common;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -12,9 +11,10 @@ import java.util.Map;
  * @date 2023/5/1
  */
 @Getter
-public class MResponse {
-    private String status;
+public class MResponse<T> {
+    private String message;
     private int code;
+    private T data;
 
     public static final int successCode = 0;
     public static final int failedCode = 1;
@@ -25,18 +25,18 @@ public class MResponse {
         return this.valueMap.getOrDefault(key, null);
     }
 
-    public MResponse set(String key, Object value) {
+    public MResponse<T> set(String key, Object value) {
         this.valueMap.put(key, value);
         return this;
     }
 
-    public MResponse setCode(int code) {
+    public MResponse<T> setCode(int code) {
         this.code = code;
         return this;
     }
 
-    public MResponse setStatus(String status) {
-        this.status = status;
+    public MResponse<T> setStatus(String status) {
+        this.message = status;
         return this;
     }
 
@@ -48,13 +48,8 @@ public class MResponse {
         return new MResponse().setCode(failedCode).setStatus("failed");
     }
 
-    public <T extends Map> void setData(T data) {
-        ObjectMapper mapper = new ObjectMapper();
-        this.valueMap = mapper.convertValue(data, Map.class);
-    }
-
-    public <T> T getData(Class<T> clz) {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.convertValue(this.valueMap, clz);
+    public MResponse<T> data(T data) {
+        this.data = data;
+        return this;
     }
 }
