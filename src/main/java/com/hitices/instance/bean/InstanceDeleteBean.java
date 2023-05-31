@@ -13,6 +13,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class InstanceDeleteBean {
-    private String podId;
-    private String serverId;
+    /**
+     * The Cluster name
+     */
+    private String clusterName;
+    /**
+     * The namespace
+     */
+    private String namespace;
+    /**
+     * The deployment name
+     */
+    private String deployment;
 }

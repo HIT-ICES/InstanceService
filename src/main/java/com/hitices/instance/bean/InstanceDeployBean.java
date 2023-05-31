@@ -13,8 +13,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class InstanceDeployBean {
-    private String serviceId;
     private String serviceName;
     private String imageUrl;
-    private String serverId;
 }

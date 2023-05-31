@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: instance-service
+  namespace: +_namespace+
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8080
+  selector:
+    app: instance-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: instance-service
+  namespace: +namespace+
+spec:
+  selector:
+    matchLabels:
+      app: instance-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: instance-service
+    spec:
+      containers:
+        - name: instance-service
+          image: instance-service:+image_tag+
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 100m
+              memory: 500Mi
+            limits:
+              cpu: 400m
+              memory: 2000Mi
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 160
+            periodSeconds: 10
+            timeoutSeconds: 5
+          env:
+            - name: REGISTRY_IP # 注册中心地址
+              value: ""
+            - name: REGISTRY_PORT # 注册中心端口
+              value: ""
+            - name: KUBESPHERE_URL # Kubesphere
+              value: ""
+            - name: KUBESPHERE_USERANME # Kubesphere用户名
+              value: ""
+            - name: KUBESPHERE_PASSWORD # Kubesphere密码
+              value: ""

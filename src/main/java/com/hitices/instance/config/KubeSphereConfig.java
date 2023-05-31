@@ -36,6 +36,17 @@ public class KubeSphereConfig{
      */
     public static String status = "/kapis/clusters/%s/resources.kubesphere.io/v1alpha3/namespaces/%s/pods";
 
+    /**
+     * KubeSphere get pod resource api path
+     */
+    public static String resource = "/kapis/clusters/%s/monitoring.kubesphere.io/v1alpha3/namespaces/%s/pods/%s" +
+            "?start=%d&end=%d&step=%ds&times=50&metrics_filter=pod_cpu_usage|pod_memory_usage_wo_cache|pod_net_bytes_transmitted|pod_net_bytes_received$";
+
+    /**
+     * KubeSphere delete deployment api path
+     */
+    public static String delete = "/apis/clusters/%s/apps/v1/namespaces/%s/deployments/%s";
+
     @Value("${KubeSphereConfig.url}")
     public void setUrl(String url) {
         KubeSphereConfig.url = url;

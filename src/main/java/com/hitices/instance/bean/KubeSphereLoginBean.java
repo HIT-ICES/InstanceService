@@ -13,6 +13,12 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class KubeSphereLoginBean {
+    /**
+     * KubeSphere username
+     */
     private String username;
+    /**
+     * KubeSphere password
+     */
     private String password;
 }

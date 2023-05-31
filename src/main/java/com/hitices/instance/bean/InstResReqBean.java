@@ -13,5 +13,28 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class InstResReqBean {
-    private String podId;
+    /**
+     * The Cluster name
+     */
+    private String clusterName;
+    /**
+     * The namespace
+     */
+    private String namespace;
+    /**
+     * The Pod name
+     */
+    private String podName;
+    /**
+     * Monitoring start time stamp
+     */
+    private Long begin;
+    /**
+     * Monitoring end time stamp
+     */
+    private Long end;
+    /**
+     * Monitoring interval in s
+     */
+    private Long step;
 }
