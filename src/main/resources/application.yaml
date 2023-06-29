@@ -3,14 +3,14 @@ server:
 spring:
   application:
     name: InstanceService
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://${REGISTRY_IP:localhost}:${REGISTRY_PORT:8761}/eureka
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://${REGISTRY_IP:localhost}:${REGISTRY_PORT:8761}/eureka
 
 
 KubeSphereConfig:
