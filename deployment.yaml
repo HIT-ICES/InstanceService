@@ -2,7 +2,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: instance-service
-  namespace: +_namespace+
 spec:
   type: ClusterIP
   ports:
@@ -15,7 +14,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: instance-service
-  namespace: +namespace+
 spec:
   selector:
     matchLabels:
@@ -28,7 +26,7 @@ spec:
     spec:
       containers:
         - name: instance-service
-          image: instance-service:+image_tag+
+          image: 192.168.1.104:5000/instance-service:v1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

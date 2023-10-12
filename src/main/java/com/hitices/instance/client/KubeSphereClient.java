@@ -5,13 +5,21 @@ import com.hitices.instance.bean.InstanceDeleteBean;
 import com.hitices.instance.bean.KubeSphereLoginBean;
 import com.hitices.instance.config.KubeSphereConfig;
 import com.hitices.instance.json.PodList;
+import com.hitices.instance.json.PodMetadata;
 import com.hitices.instance.json.PodResource;
+import com.hitices.instance.json.deploy.Deployment;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 /**
  * @author wangteng
@@ -44,14 +52,22 @@ public class KubeSphereClient {
     }
 
     public void deleteDeployment(InstanceDeleteBean ins){
-        System.out.println(KubeSphereConfig.url+String.format(KubeSphereConfig.delete,
-                ins.getClusterName(),
-                ins.getNamespace(),
-                ins.getDeployment()));
         restTemplate.delete(KubeSphereConfig.url+String.format(KubeSphereConfig.delete,
                 ins.getClusterName(),
                 ins.getNamespace(),
                 ins.getDeployment()));
     }
 
+    public void createDeployment(Deployment deployment){
+         HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Deployment> request = new HttpEntity<>(deployment, headers);
+
+        restTemplate.postForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.deploy,"ices104","wangteng"),request, String.class);
+    }
+
+    public PodList getNodePod(String cluster,String nodeName, int limit, int page){
+        return restTemplate.getForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.node_pod,cluster, limit, nodeName, page), PodList.class).getBody();
+    }
 }

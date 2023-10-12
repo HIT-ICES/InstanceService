@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashMap;
+
 /**
  * @author wangteng
  * @e-mail 1638235292@qq.com
@@ -14,4 +16,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PodMetadata {
     private String name;
+    private HashMap<String,String> labels;
 }

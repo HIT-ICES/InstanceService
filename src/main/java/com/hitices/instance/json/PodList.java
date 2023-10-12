@@ -16,4 +16,5 @@ import java.util.List;
 @NoArgsConstructor
 public class PodList {
     private List<PodItem> items;
+    private Integer totalItems;
 }

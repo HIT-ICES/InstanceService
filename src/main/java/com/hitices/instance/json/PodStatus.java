@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 /**
  * @author wangteng
  * @e-mail 1638235292@qq.com
@@ -14,4 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PodStatus {
     private String phase;
+    private String hostIP;
+    private String podIP;
+    private Date startTime;
 }

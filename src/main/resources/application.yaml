@@ -14,6 +14,6 @@ spring:
 
 
 KubeSphereConfig:
-  url: ${KUBESPHERE_URL:http://192.168.1.102:30880}
-  username: ${KUBESPHERE_USERANME:wangteng}
-  password: ${KUBESPHERE_PASSWORD:WangTeng123456}
+  url: ${KUBESPHERE_URL:http://192.168.1.104:30880}
+  username: ${KUBESPHERE_USERANME:admin}
+  password: ${KUBESPHERE_PASSWORD:Admin000123}

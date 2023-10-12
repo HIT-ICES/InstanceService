@@ -8,8 +8,13 @@ import com.hitices.instance.common.MResponse;
 import com.hitices.instance.json.PodList;
 import com.hitices.instance.json.PodResource;
 import com.hitices.instance.json.PodResourceData;
+import com.hitices.instance.json.deploy.Deployment;
+import com.hitices.instance.json.deploy.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 /**
  * @author wangteng
@@ -25,7 +30,13 @@ public class InstanceController {
 
     @PostMapping("/deploy")
     public MResponse deployInstance(@RequestBody InstanceDeployBean instanceDeployBean) {
-        System.out.println(kubeSphereClient.login());
+        Deployment deployment = new Deployment();
+        deployment.setInfo(instanceDeployBean);
+        try {
+            kubeSphereClient.createDeployment(deployment);
+        }catch (Exception e){
+           return MResponse.failedMResponse().setStatus(e.getMessage());
+        }
         return MResponse.successMResponse();
     }
 
@@ -58,6 +69,15 @@ public class InstanceController {
     @GetMapping("/status")
     public MResponse status(@RequestParam("cluster") String cluster, @RequestParam("namespace") String namespace) {
         PodList podList = kubeSphereClient.getPodStatus(cluster, namespace);
+        if (podList!=null){
+            return MResponse.successMResponse().data(podList);
+        }
+        return MResponse.failedMResponse();
+    }
+
+    @GetMapping("/node")
+    public MResponse status(@RequestParam("cluster") String cluster, @RequestParam("nodeName") String nodeName, @RequestParam("limit") int limit , @RequestParam("page") int page) {
+        PodList podList = kubeSphereClient.getNodePod(cluster, nodeName,limit,page);
         if (podList!=null){
             return MResponse.successMResponse().data(podList);
         }
