@@ -1,12 +1,12 @@
 package com.hitices.instance.client;
 
+import com.google.gson.JsonPrimitive;
 import com.hitices.instance.bean.InstResReqBean;
 import com.hitices.instance.bean.InstanceDeleteBean;
 import com.hitices.instance.bean.KubeSphereLoginBean;
+import com.hitices.instance.common.MResponse;
 import com.hitices.instance.config.KubeSphereConfig;
-import com.hitices.instance.json.PodList;
-import com.hitices.instance.json.PodMetadata;
-import com.hitices.instance.json.PodResource;
+import com.hitices.instance.json.*;
 import com.hitices.instance.json.deploy.Deployment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +18,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
+import java.text.DecimalFormat;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * @author wangteng
@@ -37,18 +42,57 @@ public class KubeSphereClient {
                 new KubeSphereLoginBean(KubeSphereConfig.username,KubeSphereConfig.password), LinkedHashMap.class).getBody().get("access_token");
     }
 
+    public Map<String, Object> getNamespace(String cluster, int limit, int page){
+        Map<String, Object> result = new HashMap<>();
+        List<String> list = new ArrayList<>();
+        String json =  restTemplate.getForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.namespace,cluster, page, limit), String.class).getBody();
+        JsonParser parser = new JsonParser();
+        JsonObject jsonObject = parser.parse(json).getAsJsonObject();
+        JsonArray items = jsonObject.getAsJsonArray("items");
+        JsonPrimitive total = jsonObject.getAsJsonPrimitive("totalItems");
+        for (int i = 0 ; i < items.size(); i++){
+            JsonObject firstItem = items.get(i).getAsJsonObject();
+            JsonObject metadata = firstItem.getAsJsonObject("metadata");
+            String name = metadata.get("name").getAsString();
+            list.add(name);
+        }
+        result.put("items", list);
+        result.put("total",total.getAsBigInteger());
+        return result;
+    }
+
     public PodList getPodStatus(String cluster, String namespace){
         return restTemplate.getForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.status,cluster,namespace), PodList.class).getBody();
     }
 
+    public PodList getPodByService(String cluster, String service){
+        PodList podList =  restTemplate.getForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.pods,cluster), PodList.class).getBody();
+        podList.setItems(podList.getItems().stream()
+                .filter(podItem -> podItem.getMetadata().getLabels().get("app")!=null && podItem.getMetadata().getLabels().get("app").equals(service))
+                .collect(Collectors.toList()));
+        podList.setTotalItems(podList.getItems().size());
+        return podList;
+    }
+
     public PodResource getPodResource(InstResReqBean inst){
-        return restTemplate.getForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.resource,
+        DecimalFormat decimalFormat = new DecimalFormat("#.############");
+        PodResource resource = restTemplate.getForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.resource,
                 inst.getClusterName(),
                 inst.getNamespace(),
                 inst.getPodName(),
                 inst.getBegin(),
                 inst.getEnd(),
                 inst.getStep()), PodResource.class).getBody();
+        for (PodResourceItem podResourceItem : resource.getResults()){
+            String name = podResourceItem.getMetric_name();
+            Double sum = 0.0;
+            Integer count = podResourceItem.getData().getResult().get(0).getValues().size();
+            for (List<String> value : podResourceItem.getData().getResult().get(0).getValues()){
+                sum += Double.valueOf(value.get(1));
+            }
+            resource.addAverage(name, decimalFormat.format(sum/count));
+        }
+        return resource;
     }
 
     public void deleteDeployment(InstanceDeleteBean ins){
@@ -59,7 +103,7 @@ public class KubeSphereClient {
     }
 
     public void createDeployment(Deployment deployment){
-         HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Deployment> request = new HttpEntity<>(deployment, headers);

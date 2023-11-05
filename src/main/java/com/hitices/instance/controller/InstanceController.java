@@ -15,12 +15,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author wangteng
  * @e-mail 1638235292@qq.com
  * @date 2023/5/1
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/instance")
 public class InstanceController {
@@ -71,6 +74,24 @@ public class InstanceController {
         PodList podList = kubeSphereClient.getPodStatus(cluster, namespace);
         if (podList!=null){
             return MResponse.successMResponse().data(podList);
+        }
+        return MResponse.failedMResponse();
+    }
+
+    @GetMapping("/status/service")
+    public MResponse getPodByService(@RequestParam("cluster") String cluster, @RequestParam("service") String service) {
+        PodList podList = kubeSphereClient.getPodByService(cluster, service);
+        if (podList!=null){
+            return MResponse.successMResponse().data(podList);
+        }
+        return MResponse.failedMResponse();
+    }
+
+    @GetMapping("/namespaces")
+    public MResponse namespaces(@RequestParam("cluster") String cluster,@RequestParam("limit") int limit,@RequestParam("page") int page) {
+        Map<String, Object> result = kubeSphereClient.getNamespace(cluster,limit, page);
+        if (result!=null){
+            return MResponse.successMResponse().data(result);
         }
         return MResponse.failedMResponse();
     }

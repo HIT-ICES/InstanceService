@@ -41,6 +41,8 @@ public class KubeSphereConfig{
      */
     public static String status = "/kapis/clusters/%s/resources.kubesphere.io/v1alpha3/namespaces/%s/pods";
 
+    public static String pods = "/kapis/clusters/%s/resources.kubesphere.io/v1alpha3/pods";
+
     /**
      * KubeSphere get pod resource api path
      */
@@ -53,6 +55,8 @@ public class KubeSphereConfig{
     public static String delete = "/apis/clusters/%s/apps/v1/namespaces/%s/deployments/%s";
 
     public static String node_pod = "/kapis/clusters/%s/resources.kubesphere.io/v1alpha3/pods?limit=%d&nodeName=%s&page=%d&sortBy=startTime";
+
+    public static String namespace = "/kapis/clusters/%s/resources.kubesphere.io/v1alpha3/namespaces?page=%d&limit=%d&sortBy=createTime";
 
     @Value("${KubeSphereConfig.url}")
     public void setUrl(String url) {
