@@ -16,5 +16,6 @@ import java.util.HashMap;
 @NoArgsConstructor
 public class PodMetadata {
     private String name;
+    private String namespace;
     private HashMap<String,String> labels;
 }
