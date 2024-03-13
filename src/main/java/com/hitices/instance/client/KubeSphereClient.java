@@ -95,6 +95,9 @@ public class KubeSphereClient {
         return resource;
     }
 
+    public DeploymentList getDeployment(String cluster, String namespace){
+        return restTemplate.getForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.get_deploy,cluster,namespace), DeploymentList.class).getBody();
+    }
     public void deleteDeployment(InstanceDeleteBean ins){
         restTemplate.delete(KubeSphereConfig.url+String.format(KubeSphereConfig.delete,
                 ins.getClusterName(),
@@ -113,5 +116,9 @@ public class KubeSphereClient {
 
     public PodList getNodePod(String cluster,String nodeName, int limit, int page){
         return restTemplate.getForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.node_pod,cluster, limit, nodeName, page), PodList.class).getBody();
+    }
+
+    public PodList getPodByName(String podName){
+        return restTemplate.getForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.pod_name ,podName), PodList.class).getBody();
     }
 }

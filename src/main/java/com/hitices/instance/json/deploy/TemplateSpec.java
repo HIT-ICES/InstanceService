@@ -3,6 +3,8 @@ package com.hitices.instance.json.deploy;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.StringUtils;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,5 +29,11 @@ public class TemplateSpec {
 
     public void addContainer(Container container){
         containers.add(container);
+    }
+
+    public void addNode(String nodeName){
+        if (!StringUtils.isEmpty(nodeName)){
+            nodeSelector.put("kubernetes.io/hostname", nodeName);
+        }
     }
 }

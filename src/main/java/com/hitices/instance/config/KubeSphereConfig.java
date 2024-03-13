@@ -58,6 +58,10 @@ public class KubeSphereConfig{
 
     public static String namespace = "/kapis/clusters/%s/resources.kubesphere.io/v1alpha3/namespaces?page=%d&limit=%d&sortBy=createTime";
 
+    public static String pod_name = "/kapis/clusters/ices104/resources.kubesphere.io/v1alpha3/pods?name=%s&sortBy=startTime&limit=10";
+
+    public static String get_deploy = "/kapis/clusters/%s/resources.kubesphere.io/v1alpha3/namespaces/%s/deployments?sortBy=updateTime";
+
     @Value("${KubeSphereConfig.url}")
     public void setUrl(String url) {
         KubeSphereConfig.url = url;

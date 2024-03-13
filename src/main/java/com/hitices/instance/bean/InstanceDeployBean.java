@@ -24,4 +24,5 @@ public class InstanceDeployBean {
     private int replicas;
     private List<Port> ports;
     private Resources resources;
+    private String nodeName;
 }

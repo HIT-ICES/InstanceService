@@ -28,5 +28,6 @@ public class Template {
         container.setPorts(ins.getPorts());
         container.setResources(ins.getResources());
         spec.addContainer(container);
+        spec.addNode(ins.getNodeName());
     }
 }

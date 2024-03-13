@@ -3,13 +3,13 @@ package com.hitices.instance.controller;
 import com.hitices.instance.bean.InstResReqBean;
 import com.hitices.instance.bean.InstanceDeleteBean;
 import com.hitices.instance.bean.InstanceDeployBean;
+import com.hitices.instance.bean.SchemeInstanceBean;
 import com.hitices.instance.client.KubeSphereClient;
 import com.hitices.instance.common.MResponse;
-import com.hitices.instance.json.PodList;
-import com.hitices.instance.json.PodResource;
-import com.hitices.instance.json.PodResourceData;
+import com.hitices.instance.json.*;
 import com.hitices.instance.json.deploy.Deployment;
 import com.hitices.instance.json.deploy.Metadata;
+import com.hitices.instance.service.InstanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +31,9 @@ public class InstanceController {
     @Autowired
     private KubeSphereClient kubeSphereClient;
 
+    @Autowired
+    private InstanceService instanceService;
+
     @PostMapping("/deploy")
     public MResponse deployInstance(@RequestBody InstanceDeployBean instanceDeployBean) {
         Deployment deployment = new Deployment();
@@ -46,6 +49,14 @@ public class InstanceController {
     @PostMapping("/delete")
     public MResponse deleteInstance(@RequestBody InstanceDeleteBean instanceDeleteBean) {
         kubeSphereClient.deleteDeployment(instanceDeleteBean);
+        return MResponse.successMResponse();
+    }
+
+    @PostMapping("/scheme/deploy")
+    public MResponse deployInstanceScheme(@RequestBody SchemeInstanceBean schemeInstanceBean){
+        System.out.println("start");
+        instanceService.executeDeploymentScheme(schemeInstanceBean);
+        System.out.println("end");
         return MResponse.successMResponse();
     }
 
