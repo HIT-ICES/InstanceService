@@ -1,6 +1,6 @@
 package com.hitices.instance.client;
 
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 import com.hitices.instance.bean.InstResReqBean;
 import com.hitices.instance.bean.InstanceDeleteBean;
 import com.hitices.instance.bean.KubeSphereLoginBean;
@@ -21,10 +21,6 @@ import org.springframework.web.client.RestTemplate;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 /**
  * @author wangteng
@@ -111,7 +107,18 @@ public class KubeSphereClient {
 
         HttpEntity<Deployment> request = new HttpEntity<>(deployment, headers);
 
-        restTemplate.postForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.deploy,"ices104","wangteng"),request, String.class);
+        restTemplate.postForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.deploy,"ices104", deployment.getMetadata().getNamespace()),request, String.class);
+    }
+
+    public int createService(JsonObject service, String cluster, String namespace){
+        Gson gson = new Gson();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> request = new HttpEntity<>(service.toString(), headers);
+
+        String result = restTemplate.postForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.service,cluster,namespace), request, String.class).getBody();
+        JsonObject jsonObject = gson.fromJson(result, JsonObject.class);
+        return jsonObject.getAsJsonObject("spec").getAsJsonArray("ports").get(0).getAsJsonObject().get("nodePort").getAsInt();
     }
 
     public PodList getNodePod(String cluster,String nodeName, int limit, int page){

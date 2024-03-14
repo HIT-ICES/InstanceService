@@ -37,6 +37,10 @@ public class KubeSphereConfig{
     public static String deploy = "/apis/clusters/%s/apps/v1/namespaces/%s/deployments";
 
     /**
+     * KubeSphere create service
+     */
+    public static String service = "/api/clusters/%s/v1/namespaces/%s/services";
+    /**
      * KubeSphere get pod status api path
      */
     public static String status = "/kapis/clusters/%s/resources.kubesphere.io/v1alpha3/namespaces/%s/pods";
