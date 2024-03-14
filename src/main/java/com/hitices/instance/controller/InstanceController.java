@@ -54,9 +54,7 @@ public class InstanceController {
 
     @PostMapping("/scheme/deploy")
     public MResponse deployInstanceScheme(@RequestBody SchemeInstanceBean schemeInstanceBean){
-        System.out.println("start");
         instanceService.executeDeploymentScheme(schemeInstanceBean);
-        System.out.println("end");
         return MResponse.successMResponse();
     }
 

@@ -2,6 +2,7 @@ package com.hitices.instance.service.impl;
 
 import com.hitices.instance.bean.InstanceDeleteBean;
 import com.hitices.instance.bean.InstanceDeployBean;
+import com.hitices.instance.bean.SchemeDeployCallbackBean;
 import com.hitices.instance.bean.SchemeInstanceBean;
 import com.hitices.instance.client.DeploymentServiceClient;
 import com.hitices.instance.client.KubeSphereClient;
@@ -47,8 +48,8 @@ public class InstanceServiceImpl implements InstanceService {
                 kubeSphereClient.createDeployment(deployment);
             }
         }catch (Exception e){
-            deploymentServiceClient.deploySchemeCallback(MResponse.failedMResponse());
+            deploymentServiceClient.deploySchemeCallback(new SchemeDeployCallbackBean(schemeInstanceBean.getId(), 1));
         }
-        deploymentServiceClient.deploySchemeCallback(MResponse.successMResponse());
+        deploymentServiceClient.deploySchemeCallback(new SchemeDeployCallbackBean(schemeInstanceBean.getId(), 0));
     }
 }

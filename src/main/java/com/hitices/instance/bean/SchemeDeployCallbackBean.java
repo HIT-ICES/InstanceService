@@ -5,21 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 /**
  * @author wangteng
  * @email willtynn@outlook.com
- * @date 2024/3/13 17:25
+ * @date 2024/3/13 15:31
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SchemeInstanceBean {
-    private String cluster;
+public class SchemeDeployCallbackBean {
     private Long id;
-    private String name;
-    private String namespace;
-    private List<InstanceDeployBean> scheme;
+    private int status;
 }
