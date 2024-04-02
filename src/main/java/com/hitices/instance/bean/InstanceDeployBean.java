@@ -25,4 +25,5 @@ public class InstanceDeployBean {
     private List<Port> ports;
     private Resources resources;
     private String nodeName;
+    private String nodeIp;
 }
