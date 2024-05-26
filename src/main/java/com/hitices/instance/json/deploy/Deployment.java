@@ -25,7 +25,7 @@ public class Deployment {
         metadata.setNamespace(ins.getNamespace());
         metadata.addApp(ins.getServiceName());
         spec.setReplicas(ins.getReplicas());
-        spec.addApp(ins.getServiceName());
+        spec.addApp(ins);
         spec.setInfo(ins);
     }
 }

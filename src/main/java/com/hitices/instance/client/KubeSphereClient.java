@@ -91,6 +91,27 @@ public class KubeSphereClient {
         return resource;
     }
 
+    public PodResource exportPodResource(InstResReqBean inst){
+        DecimalFormat decimalFormat = new DecimalFormat("#.############");
+        PodResource resource = restTemplate.getForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.resource,
+                inst.getClusterName(),
+                inst.getNamespace(),
+                inst.getPodName(),
+                inst.getBegin(),
+                inst.getEnd(),
+                inst.getStep()), PodResource.class).getBody();
+        for (PodResourceItem podResourceItem : resource.getResults()){
+            String name = podResourceItem.getMetric_name();
+            Double sum = 0.0;
+            Integer count = podResourceItem.getData().getResult().get(0).getValues().size();
+            for (List<String> value : podResourceItem.getData().getResult().get(0).getValues()){
+                sum += Double.valueOf(value.get(1));
+            }
+            resource.addAverage(name, decimalFormat.format(sum/count));
+        }
+        return resource;
+    }
+
     public DeploymentList getDeployment(String cluster, String namespace){
         return restTemplate.getForEntity(KubeSphereConfig.url+String.format(KubeSphereConfig.get_deploy,cluster,namespace), DeploymentList.class).getBody();
     }

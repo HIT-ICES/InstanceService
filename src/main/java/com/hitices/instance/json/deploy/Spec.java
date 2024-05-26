@@ -21,9 +21,9 @@ public class Spec {
     private Template template = new Template();
     private Strategy strategy = new Strategy();
 
-    public void addApp(String name){
-        selector.addApp(name);
-        template.addApp(name);
+    public void addApp(InstanceDeployBean ins){
+        selector.addApp(ins);
+        template.addApp(ins);
     }
 
     public void setInfo(InstanceDeployBean ins){

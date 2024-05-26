@@ -23,5 +23,7 @@ public class Metadata {
 
     public void addApp(String name){
         labels.put("app",name);
+        labels.put("routectl-name",name);
+        labels.put("routectl-ns",this.namespace);
     }
 }

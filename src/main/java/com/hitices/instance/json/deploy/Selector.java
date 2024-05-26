@@ -1,5 +1,6 @@
 package com.hitices.instance.json.deploy;
 
+import com.hitices.instance.bean.InstanceDeployBean;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +19,9 @@ import java.util.Map;
 public class Selector {
     private Map<String, String> matchLabels = new HashMap<>();
 
-    public void addApp(String name){
-        matchLabels.put("app",name);
+    public void addApp(InstanceDeployBean ins){
+        matchLabels.put("app", ins.getServiceName());
+        matchLabels.put("routectl-name", ins.getServiceName());
+        matchLabels.put("routectl-ns", ins.getNamespace());
     }
 }

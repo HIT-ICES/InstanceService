@@ -1,31 +1,36 @@
 # InstanceService
+## Introduction
+**InstanceService** is a Springboot Java back-end implementation based on the Springboot Java back-end , designed to provide for the service instance to provide query , deployment , uninstallation and other functions.
 
-实例管理
+## Installation and Running
+1. Clone the repository:
+```
+git clone https://github.com/your_username/your_microservice.git
+```
+2. Navigate to the project directory:
+```
+cd instanceservice
+```
+3. Build the project using Maven:
+```
+mvn clean install
+```
+4. Build the Docker image:
+```
+docker build -t <you_image_url> .
+```
+5. Deploying to Kubernetes:
+Make sure you have a Kubernetes cluster set up and kubectl configured to communicate with the cluster.
+   Modify the image, namespace and other information in the deployment.yaml configuration file.
+```
+kubectl apply -f deployment.yaml
+```
 
-## 接口列表
-
-### /instance/deploy
-目前支持部署Deployment（测试中）
-
-后续建议部署过程与Jenkins集成，使用KubeSphere的API感觉不是特别方便，使用Jenkins直接接入github获取代码和部署配置文件。
-### /instance/delete
-目前支持删除Deployment（测试中）
-### /instance/resourceHistory
-查询特定POD的资源使用日志，包括CPU，MEM，NET（已完成）
-### /instance/status
-查看某一namespace下的容器状态信息（已完成）
-
-
-## application.yaml配置说明
+## application.yaml
 KubeSphereConfig:
 
-url: KubeSphere地址
+url: KubeSphere`s URL
 
-username: KubeSphere账号
+username: KubeSphere`s username
 
-password: KubeSphere账号的密码
-
-这是属性配置可以在部署配置中通过环境变量修改
-
-## 关于deployment.yaml
-其中例如namespace等设置为变量，可以在CI/CD的过程中动态修改。
+password: KubeSphere`s password

@@ -8,23 +8,24 @@ import com.hitices.instance.client.KubeSphereClient;
 import com.hitices.instance.common.MResponse;
 import com.hitices.instance.json.*;
 import com.hitices.instance.json.deploy.Deployment;
-import com.hitices.instance.json.deploy.Metadata;
 import com.hitices.instance.service.InstanceService;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.http.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author wangteng
@@ -106,6 +107,87 @@ public class InstanceController {
             return MResponse.successMResponse().data(podResource);
         }
         return MResponse.failedMResponse();
+    }
+
+    /**
+     * Get the resource history of pod in a given namespace under a cluster between timestamp
+     * @param instResReqBean information of pod
+     * @return podResource contain cpu, mem, net
+     */
+    @PostMapping("/resourceHistory/export")
+    public ResponseEntity<byte[]> exportResourceHistory(@RequestBody InstResReqBean instResReqBean) {
+        try {
+            PodResource podResource = kubeSphereClient.getPodResource(instResReqBean);
+            // 创建Excel工作簿
+            Map<String, List<Double>> data = new HashMap<>();
+            Map<String, Double> sums = new HashMap<>();
+            Workbook workbook = new XSSFWorkbook();
+            // 原始数据
+            for (PodResourceItem item: podResource.getResults()){
+                Sheet sheet = workbook.createSheet(item.getMetric_name());
+                data.put(item.getMetric_name(),new ArrayList<>());
+                Row row = sheet.createRow(0);
+                Cell cell = row.createCell(0);
+                cell.setCellValue("time");
+                cell = row.createCell(1);
+                cell.setCellValue("value");
+                int i = 1;
+                double sum = 0;
+                for (List value:item.getData().getResult().get(0).getValues()){
+                    row = sheet.createRow(i);
+                    cell = row.createCell(0);
+                    cell.setCellValue(value.get(0).toString());
+                    cell = row.createCell(1);
+                    cell.setCellValue(value.get(1).toString());
+                    data.get(item.getMetric_name()).add(Double.valueOf(value.get(1).toString()));
+                    sum += Double.valueOf(value.get(1).toString());
+                    i += 1;
+                }
+                sums.put(item.getMetric_name(),sum);
+            }
+            // 统计数据
+            Sheet sheet = workbook.createSheet("result");
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellValue("item");
+            cell = row.createCell(1);
+            cell.setCellValue("P99");
+            cell = row.createCell(2);
+            cell.setCellValue("P95");
+            cell = row.createCell(3);
+            cell.setCellValue("P50");
+            cell = row.createCell(4);
+            cell.setCellValue("AVG");
+            int i = 1;
+            for (String key:data.keySet()){
+                List<Double> values = data.get(key);
+                Collections.sort(values);
+                row = sheet.createRow(i);
+                cell = row.createCell(0);
+                cell.setCellValue(key);
+                cell = row.createCell(1);
+                cell.setCellValue(values.get((int)Math.ceil(values.size() * 0.99)-1));
+                cell = row.createCell(2);
+                cell.setCellValue(values.get((int)Math.ceil(values.size() * 0.95)-1));
+                cell = row.createCell(3);
+                cell.setCellValue(values.get((int)Math.ceil(values.size() * 0.50)-1));
+                cell = row.createCell(4);
+                cell.setCellValue(sums.get(key)/values.size());
+                i += 1;
+            }
+            // 构建HTTP响应，将C文件返回给用户
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+
+            byte[] csvBytes = outputStream.toByteArray();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("text/csv"));
+            headers.setContentDispositionFormData("filename", "resource.xlsx");
+            return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

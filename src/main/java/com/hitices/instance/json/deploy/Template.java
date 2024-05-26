@@ -17,8 +17,8 @@ public class Template {
     private ContainerMetadata metadata = new ContainerMetadata();
     private TemplateSpec spec = new TemplateSpec();
 
-    public void addApp(String name){
-        metadata.addApp(name);
+    public void addApp(InstanceDeployBean ins){
+        metadata.addApp(ins);
     }
 
     public void setInfo(InstanceDeployBean ins){
