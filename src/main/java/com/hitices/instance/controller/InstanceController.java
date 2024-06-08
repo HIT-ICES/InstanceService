@@ -182,7 +182,7 @@ public class InstanceController {
             byte[] csvBytes = outputStream.toByteArray();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.parseMediaType("text/csv"));
-            headers.setContentDispositionFormData("filename", "resource.xlsx");
+            headers.setContentDispositionFormData("filename", "resource_"+System.currentTimeMillis()+".xlsx");
             return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
         } catch (IOException e) {
             e.printStackTrace();
