@@ -43,6 +43,11 @@ public class InstanceController {
     @Autowired
     private InstanceService instanceService;
 
+    /**
+     * Deploy a instance
+     * @param instanceDeployBean
+     * @return
+     */
     @PostMapping("/deploy")
     public MResponse deployInstance(@RequestBody InstanceDeployBean instanceDeployBean) {
         Deployment deployment = new Deployment();
